@@ -2,17 +2,31 @@
 
 > 一个基于 Spring Boot + Vue.js + MySQL 的就业咨询预约管理系统
 
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.8-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Vue.js](https://img.shields.io/badge/Vue.js-3.5.25-brightgreen.svg)](https://vuejs.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://www.mysql.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 ## 📋 项目简介
 
-本系统为学生提供就业咨询师预约服务，支持学生信息管理、咨询师信息查看、预约创建、咨询记录完善及多格式导出等功能。
+本系统为学生提供就业咨询师预约服务，支持学生信息管理、咨询师信息查看、预约创建、咨询记录完善及多格式导出等功能。采用前后端分离架构，后端基于 Spring Boot 提供 RESTful API，前端使用 Vue.js 构建响应式界面。
 
 ### 核心功能
 
 - 👨‍🏫 **咨询师信息管理**：查看大学咨询师和企业咨询师信息，支持类型筛选和关键词搜索
-- 👨‍🎓 **学生信息管理**：添加学生基本信息，支持列表展示和搜索
-- 📅 **咨询预约**：创建咨询预约，支持模糊搜索学生、咨询师和咨询室
-- 📝 **咨询记录管理**：完善咨询记录，支持导出为 JSON/XML/TXT 格式
-- 🔍 **模糊搜索**：所有列表页面支持实时搜索和过滤
+- 👨‍🎓 **学生信息管理**：添加学生基本信息，支持列表展示和实时搜索
+- 📅 **咨询预约**：创建咨询预约，支持模糊搜索学生、咨询师和咨询室，自动生成预约ID
+- 📝 **咨询记录管理**：完善咨询记录，填写咨询问题和结论，支持导出为 JSON/XML/TXT 格式
+- 🔍 **模糊搜索**：所有列表页面支持实时搜索和过滤，提升用户体验
+- 📊 **数据统计**：实时显示记录数量，方便数据管理
+
+### 系统特色
+
+✅ **前后端分离架构** - 清晰的代码结构，便于维护和扩展  
+✅ **响应式设计** - 基于 Bootstrap 5，适配多种设备  
+✅ **数据自动初始化** - 系统启动时自动从 CSV 文件加载初始数据  
+✅ **安全认证** - 集成 Spring Security，支持用户登录认证  
+✅ **多格式导出** - 支持 JSON、XML、TXT 三种格式的数据导出  
 
 ## 🛠️ 技术栈
 
@@ -62,55 +76,97 @@ appointsystem/
 
 ### 环境要求
 
-- **JDK 17+**
-- **Maven 3.6+**
-- **MySQL 8.0+**
+在开始之前，请确保你的系统已安装以下环境：
+
+| 环境 | 版本要求 | 说明 |
+|------|----------|------|
+| JDK | 17+ | 推荐 JDK 17 或 JDK 21 |
+| Maven | 3.6+ | 用于项目构建和依赖管理 |
+| MySQL | 8.0+ | 数据库服务 |
+| 浏览器 | 现代浏览器 | 推荐 Chrome、Firefox、Edge |
 
 ### 安装步骤
 
-#### 1. 克隆项目
+#### 1️⃣ 克隆项目
 
 ```bash
 git clone <repository-url>
 cd appointsystem
 ```
 
-#### 2. 创建数据库
+#### 2️⃣ 配置数据库
+
+**创建数据库：**
 
 ```sql
-CREATE DATABASE employment_consult DEFAULT CHARACTER SET utf8mb4;
+-- 连接 MySQL
+mysql -u root -p
+
+-- 创建数据库
+CREATE DATABASE employment_consult DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- 退出 MySQL
+exit;
 ```
 
-#### 3. 配置数据库
+**初始化数据表：**
 
-修改 `src/main/resources/application.yaml`：
+```bash
+# Windows
+mysql -u root -p employment_consult < src/main/resources/db/schema.sql
+
+# Linux/Mac
+mysql -u root -p employment_consult < src/main/resources/db/schema.sql
+```
+
+或者可以手动执行 SQL 脚本：
+
+```sql
+-- 在 MySQL 客户端中执行
+mysql -u root -p employment_consult
+source src/main/resources/db/schema.sql;
+```
+
+#### 3️⃣ 修改配置文件
+
+编辑 `src/main/resources/application.yaml`，修改数据库连接信息：
 
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/employment_consult
-    username: root        # 修改为你的 MySQL 用户名
-    password: 123456      # 修改为你的 MySQL 密码
+    url: jdbc:mysql://localhost:3306/employment_consult?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    username: root        # ⭐ 修改为你的 MySQL 用户名
+    password: 123456      # ⭐ 修改为你的 MySQL 密码
 ```
 
-#### 4. 初始化数据库表
+#### 4️⃣ 启动项目
 
-系统启动时会自动执行 `src/main/resources/db/schema.sql` 创建表结构。
-
-#### 5. 启动项目
+**方式一：使用 Maven 直接运行（推荐开发环境）**
 
 ```bash
-# 使用 Maven 启动
 mvn spring-boot:run
+```
 
-# 或打包后启动
-mvn clean package
+**方式二：打包后运行（推荐生产环境）**
+
+```bash
+# 打包项目
+mvn clean package -DskipTests
+
+# 运行 jar 文件
 java -jar target/appointsystem-0.0.1-SNAPSHOT.jar
 ```
 
-#### 6. 访问系统
+#### 5️⃣ 访问系统
 
-打开浏览器访问：[http://localhost:8080](http://localhost:8080)
+等待启动成功后，打开浏览器访问：
+
+- **系统首页**：[http://localhost:8080](http://localhost:8080)
+- **登录页面**：[http://localhost:8080/login.html](http://localhost:8080/login.html)
+
+🔑 **默认登录账户：**
+- 用户名：`admin`
+- 密码：`123456`
 
 ## 💡 使用说明
 
@@ -183,9 +239,9 @@ mybatis:
 
 ### 1. 启动失败：端口被占用
 
-**问题**：`Port 8080 was already in use`
+**问题描述**：`Port 8080 was already in use`
 
-**解决**：
+**解决方法**：
 
 ```bash
 # Windows
@@ -197,32 +253,111 @@ lsof -i :8080
 kill -9 <进程ID>
 ```
 
+**或者修改端口**：
+
+在 `application.yaml` 中修改：
+```yaml
+server:
+  port: 8081  # 改为其他未占用的端口
+```
+
 ### 2. 数据库连接失败
 
-**问题**：`Access denied for user 'root'@'localhost'`
+**问题 A**：`Access denied for user 'root'@'localhost'`
 
-**解决**：
-- 检查 `application.yaml` 中的用户名和密码
+**解决方法**：
+- 检查 `application.yaml` 中的用户名和密码是否正确
 - 确认 MySQL 服务已启动
+- 检查 MySQL 用户权限
+
+**问题 B**：`Unknown database 'employment_consult'`
+
+**解决方法**：
 - 确认数据库 `employment_consult` 已创建
+- 执行创建数据库命令：
+  ```sql
+  CREATE DATABASE employment_consult DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+  ```
 
-### 3. 前端页面空白
+**问题 C**：`Table 'employment_consult.student' doesn't exist`
 
-**问题**：页面加载后无数据显示
+**解决方法**：
+- 执行 SQL 初始化脚本：
+  ```bash
+  mysql -u root -p employment_consult < src/main/resources/db/schema.sql
+  ```
 
-**解决**：
-- 打开浏览器开发者工具查看控制台错误
-- 检查后端接口是否正常启动
-- 清除浏览器缓存后重试
+### 3. 前端页面空白或无数据
+
+**问题描述**：页面加载后无数据显示或显示“暂无数据”
+
+**解决步骤**：
+
+1. **打开浏览器开发者工具**（F12）
+   - 查看 Console 选项卡是否有错误信息
+   - 查看 Network 选项卡 API 请求是否成功
+
+2. **检查后端服务**
+   - 确认后端应用已启动
+   - 访问 API 接口测试：`http://localhost:8080/api/consultants`
+
+3. **清除浏览器缓存**
+   - 按 `Ctrl + Shift + Delete` 清除缓存
+   - 或使用隐私模式浏览
+
+4. **检查数据库数据**
+   ```sql
+   USE employment_consult;
+   SELECT * FROM consultant;
+   SELECT * FROM student;
+   ```
 
 ### 4. CSV 数据加载失败
 
-**问题**：启动日志显示 CSV 加载错误
+**问题描述**：启动日志显示 CSV 加载错误
 
-**解决**：
-- 检查 CSV 文件编码是否为 UTF-8
-- 检查 CSV 文件格式是否正确
-- 查看日志中的详细错误信息
+**解决方法**：
+
+1. **检查文件编码**
+   - CSV 文件必须为 UTF-8 编码
+   - 使用 Notepad++ 或 VS Code 检查并转换编码
+
+2. **检查文件格式**
+   - 确保每行字段数量正确
+   - 检查是否有特殊字符导致解析错误
+
+3. **查看详细日志**
+   - 启动应用时查看控制台输出
+   - 查看 `csv_load_log` 表中的错误信息
+
+### 5. Maven 构建警告
+
+**问题描述**：`WARNING: 'dependencies.dependency' must be unique`
+
+**解决方法**：
+- 这是 Lombok 依赖重复的警告，已经修复
+- 如果仍有问题，执行：
+  ```bash
+  mvn clean install -U
+  ```
+
+### 6. 登录无法跳转到首页
+
+**问题描述**：登录成功后仍然在登录页
+
+**解决方法**：
+- 检查 SecurityConfig 配置是否正确
+- 确认静态资源路径配置正确
+- 检查浏览器 Cookie 设置
+
+### 7. 其他问题
+
+如果遇到其他问题，请：
+
+1. 查看控制台完整错误日志
+2. 检查数据库连接和表结构
+3. 确认所有依赖已正确安装
+4. 尝试清理后重新构建：`mvn clean install`
 
 ## 📝 开发说明
 
@@ -254,18 +389,6 @@ kill -9 <进程ID>
 - 建议使用 HTTPS 协议
 - 密码应使用 BCrypt 加密存储
 
-## 📄 许可证
 
-MIT License
-
-## 👥 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 📧 联系方式
-
-如有问题，请联系项目维护者。
-
----
 
 **最后更新时间**：2025-12-29

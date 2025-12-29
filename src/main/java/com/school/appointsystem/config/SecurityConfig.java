@@ -20,20 +20,27 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/login.html", "/css/**", "/js/**").permitAll()  // 允许访问登录页面和静态资源
-                .anyRequest().authenticated()  // 其他所有请求都需要认证
+                .requestMatchers(
+                    "/login.html", 
+                    "/index.html",
+                    "/pages/**",
+                    "/css/**", 
+                    "/js/**",
+                    "/api/**"  // 允许所有 API 接口匿名访问
+                ).permitAll()
+                .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/login.html")  // 指定自定义登录页面
-                .loginProcessingUrl("/login")  // 指定登录处理URL
-                .defaultSuccessUrl("/index.html", true)  // 登录成功后跳转到首页
+                .loginPage("/login.html")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/index.html", true)
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutSuccessUrl("/login.html")  // 登出后跳转到登录页面
+                .logoutSuccessUrl("/login.html")
                 .permitAll()
             )
-            .csrf(csrf -> csrf.disable()); // 禁用CSRF保护
+            .csrf(csrf -> csrf.disable()); // 简化开发，生产环境建议启用
             
         return http.build();
     }

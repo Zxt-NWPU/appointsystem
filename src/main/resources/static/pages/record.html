@@ -24,8 +24,8 @@
             <input type="text" class="form-control" id="recordId" v-model="record.id" placeholder="请输入预约时生成的ID">
           </div>
           <div class="col-md-6">
-            <label for="endTime" class="form-label">咨询结束时间 <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="endTime" v-model="record.endTime" placeholder="格式：yyyy-MM-dd HH:mm">
+            <label for="endTime" class="form-label">咨询结束日期 <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" id="endTime" v-model="record.endTime">
           </div>
         </div>
         <div class="mb-3">

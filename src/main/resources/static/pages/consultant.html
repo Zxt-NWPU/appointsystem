@@ -111,13 +111,19 @@
             async loadConsultants() {
                 try {
                     const response = await axios.get("/api/consultants");
-                    this.consultants = Array.isArray(response) ? response : [];
-                    this.filteredConsultants = this.consultants;
+                    console.log("完整响应对象:", response);
+                    console.log("响应是否为数组:", Array.isArray(response));
+                    console.log("响应长度:", response?.length);
+                    
+                    // 修正：axios 返回的 response 直接就是数据数组，不需要 .data
+                    const data = Array.isArray(response) ? response : [];
+                    this.consultants = data;
+                    this.filteredConsultants = data;
+                    
+                    console.log("✅ 成功加载咨询师数据，共", this.filteredConsultants.length, "条");
                 } catch (error) {
-                    console.error("加载咨询师数据失败:", error);
-                    alert("加载咨询师数据失败，请刷新重试");
-                    this.consultants = [];
-                    this.filteredConsultants = [];
+                    console.error("❌ 加载错误详情:", error);
+                    alert("加载咨询师数据失败：" + (error.response?.data?.msg || "服务器异常"));
                 }
             },
             /**

@@ -68,8 +68,8 @@
                         </datalist>
                     </div>
                     <div class="col-md-6">
-                        <label for="startTime" class="form-label">咨询起始时间 <span class="text-danger">*</span></label>
-                        <input type="datetime-local" class="form-control" id="startTime" v-model="reserve.startTime">
+                        <label for="startTime" class="form-label">咨询起始日期 <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="startTime" v-model="reserve.startTime">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">提交预约</button>
@@ -295,8 +295,9 @@
                     const response = await axios.get("/api/records");
                     this.reserves = Array.isArray(response) ? response : [];
                     this.filteredReserves = this.reserves;
+                    console.log("✅ 加载预约记录成功，共", this.reserves.length, "条");
                 } catch (error) {
-                    console.error("加载预约记录失败:", error);
+                    console.error("❌ 加载预约记录失败:", error);
                     this.reserves = [];
                     this.filteredReserves = [];
                 }
@@ -340,10 +341,9 @@
                     alert("请填写完整的预约信息！");
                     return;
                 }
-                // 2. 转换datetime-local格式为后端期望格式
-                const formattedTime = this.formatDateTime(this.reserve.startTime);
-                if (!checkTimeFormat(formattedTime)) {
-                    alert("起始时间格式错误！");
+                // 2. 校验时间格式（调用tools.js中的工具函数）
+                if (!checkTimeFormat(this.reserve.startTime)) {
+                    alert("起始时间格式错误！请按yyyy-MM-dd HH:mm填写（如2024-12-01 14:30）");
                     return;
                 }
                 // 3. 生成唯一预约ID（前端暂生成，后端需确认唯一性）
@@ -355,7 +355,7 @@
                         studentName: this.reserve.studentName,
                         consultantName: this.reserve.consultantName,
                         roomNo: this.reserve.roomNo,
-                        startTime: formattedTime
+                        startTime: this.reserve.startTime
                     };
                     await axios.post("/api/reserves", reserveData);
                     // 5. 显示成功提示
@@ -374,15 +374,6 @@
                     alert("预约失败：" + (error.response?.data?.msg || "服务器异常，请稍后重试"));
                     console.error("预约错误：", error);
                 }
-            },
-            /**
-             * 格式化datetime-local时间为后端期望格式
-             * @param {string} dateTimeStr - datetime-local格式（yyyy-MM-ddTHH:mm）
-             * @returns {string} 后端期望格式（yyyy-MM-dd HH:mm）
-             */
-            formatDateTime(dateTimeStr) {
-                if (!dateTimeStr) return "";
-                return dateTimeStr.replace("T", " ");
             }
         }
     }).mount('#reserveApp');

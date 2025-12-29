@@ -47,14 +47,8 @@ public class CsvLoadService implements CommandLineRunner {
 
     // 加载咨询师CSV数据
     private void loadConsultantData() {
-        CsvLoadLog csvLoadLog = new CsvLoadLog();
-        csvLoadLog.setFileName("consultant.csv");
-        csvLoadLog.setLoadTime(new Date());
-
-        try {
-            List<String[]> rows = CsvUtils.readCsv(consultantCsv);
+        loadCsvData("consultant.csv", consultantCsv, rows -> {
             int successCount = 0;
-
             for (String[] row : rows) {
                 Consultant consultant = new Consultant();
                 consultant.setIdCard(row[0]);
@@ -65,37 +59,19 @@ public class CsvLoadService implements CommandLineRunner {
                 consultant.setIntro(row[5]);
                 consultant.setType(Integer.parseInt(row[6]));
 
-                // 避免重复插入
                 if (consultantMapper.selectByIdCard(consultant.getIdCard()) == null) {
                     consultantMapper.insert(consultant);
                     successCount++;
                 }
             }
-
-            csvLoadLog.setLoadCount(successCount);
-            csvLoadLog.setStatus(1); // 1=成功
-            csvLoadLog.setErrorMsg(null);
-            log.info("咨询师CSV加载成功，新增{}条数据", successCount);
-        } catch (Exception e) {
-            csvLoadLog.setLoadCount(0);
-            csvLoadLog.setStatus(0); // 0=失败
-            csvLoadLog.setErrorMsg(e.getMessage());
-            log.error("咨询师CSV加载失败", e);
-        } finally {
-            csvLoadLogMapper.insert(csvLoadLog);
-        }
+            return successCount;
+        });
     }
 
     // 加载咨询室CSV数据
     private void loadRoomData() {
-        CsvLoadLog csvLoadLog = new CsvLoadLog();
-        csvLoadLog.setFileName("room.csv");
-        csvLoadLog.setLoadTime(new Date());
-
-        try {
-            List<String[]> rows = CsvUtils.readCsv(roomCsv);
+        loadCsvData("room.csv", roomCsv, rows -> {
             int successCount = 0;
-
             for (String[] row : rows) {
                 Room room = new Room();
                 room.setRoomNo(row[0]);
@@ -103,24 +79,42 @@ public class CsvLoadService implements CommandLineRunner {
                 room.setBuilding(row[2]);
                 room.setRoomNumber(row[3]);
 
-                // 避免重复插入
                 if (roomMapper.selectByRoomNo(room.getRoomNo()) == null) {
                     roomMapper.insert(room);
                     successCount++;
                 }
             }
+            return successCount;
+        });
+    }
+
+    // 通用 CSV 加载方法
+    private void loadCsvData(String fileName, Resource csvResource, CsvProcessor processor) {
+        CsvLoadLog csvLoadLog = new CsvLoadLog();
+        csvLoadLog.setFileName(fileName);
+        csvLoadLog.setLoadTime(new Date());
+
+        try {
+            List<String[]> rows = CsvUtils.readCsv(csvResource);
+            int successCount = processor.process(rows);
 
             csvLoadLog.setLoadCount(successCount);
-            csvLoadLog.setStatus(1);
+            csvLoadLog.setStatus(1); // 1=成功
             csvLoadLog.setErrorMsg(null);
-            log.info("咨询室CSV加载成功，新增{}条数据", successCount);
+            log.info("{}CSV加载成功，新增{}条数据", fileName.replace(".csv", ""), successCount);
         } catch (Exception e) {
             csvLoadLog.setLoadCount(0);
-            csvLoadLog.setStatus(0);
+            csvLoadLog.setStatus(0); // 0=失败
             csvLoadLog.setErrorMsg(e.getMessage());
-            log.error("咨询室CSV加载失败", e);
+            log.error("{}CSV加载失败", fileName, e);
         } finally {
             csvLoadLogMapper.insert(csvLoadLog);
         }
+    }
+
+    // CSV 处理函数式接口
+    @FunctionalInterface
+    private interface CsvProcessor {
+        int process(List<String[]> rows) throws Exception;
     }
 }
