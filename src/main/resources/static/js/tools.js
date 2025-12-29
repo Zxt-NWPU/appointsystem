@@ -98,15 +98,3 @@ function downloadFile(content, fileName, contentType) {
         URL.revokeObjectURL(url);
     }, 100);
 }
-
-/**
- * 日期格式化（将Date对象转为yyyy-MM-dd格式）
- * @param {Date} date - Date对象
- * @returns {string} 格式化后的日期字符串
- */
-function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份0-11，补零为2位
-    const day = String(date.getDate()).padStart(2, '0'); // 日期补零为2位
-    return `${year}-${month}-${day}`;
-}

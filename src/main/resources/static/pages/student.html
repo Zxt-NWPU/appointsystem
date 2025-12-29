@@ -172,13 +172,11 @@
             async loadStudents() {
                 try {
                     const response = await axios.get("/api/students");
-                    const data = response.data;
-                    this.students = Array.isArray(data) ? data : [];
+                    this.students = Array.isArray(response) ? response : [];
                     this.filteredStudents = this.students;
-                    console.log("加载学生数据成功，共", this.students.length, "条");
                 } catch (error) {
                     console.error("加载学生数据失败:", error);
-                    this.handleError(error, "加载学生数据失败");
+                    alert("加载学生数据失败，请刷新重试");
                     this.students = [];
                     this.filteredStudents = [];
                 }
@@ -218,7 +216,8 @@
                     this.resetForm();
                     this.loadStudents();
                 } catch (error) {
-                    this.handleError(error, "添加学生信息失败");
+                    console.error("添加学生失败:", error);
+                    alert("添加学生信息失败：" + (error.response?.data?.msg || "服务器异常"));
                 }
             },
             /**

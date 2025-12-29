@@ -295,9 +295,8 @@
                     const response = await axios.get("/api/records");
                     this.reserves = Array.isArray(response) ? response : [];
                     this.filteredReserves = this.reserves;
-                    console.log("✅ 加载预约记录成功，共", this.reserves.length, "条");
                 } catch (error) {
-                    console.error("❌ 加载预约记录失败:", error);
+                    console.error("加载预约记录失败:", error);
                     this.reserves = [];
                     this.filteredReserves = [];
                 }

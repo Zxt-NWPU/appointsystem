@@ -111,19 +111,13 @@
             async loadConsultants() {
                 try {
                     const response = await axios.get("/api/consultants");
-                    const data = response.data;
-                    console.log("完整响应对象:", response);
-                    console.log("响应数据:", data);
-                    console.log("响应是否为数组:", Array.isArray(data));
-                    console.log("响应长度:", data?.length);
-                    
-                    this.consultants = Array.isArray(data) ? data : [];
+                    this.consultants = Array.isArray(response) ? response : [];
                     this.filteredConsultants = this.consultants;
-                    
-                    console.log("成功加载咨询师数据，共", this.filteredConsultants.length, "条");
                 } catch (error) {
-                    console.error("加载错误详情:", error);
-                    this.handleError(error, "加载咨询师数据失败");
+                    console.error("加载咨询师数据失败:", error);
+                    alert("加载咨询师数据失败，请刷新重试");
+                    this.consultants = [];
+                    this.filteredConsultants = [];
                 }
             },
             /**
