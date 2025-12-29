@@ -1,0 +1,55 @@
+/* 全局背景色 */
+body {
+    background-color: #f0f2f5;
+    font-family: "Microsoft YaHei", sans-serif;
+}
+
+/* 卡片样式优化 */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+/* 表单控件聚焦样式 */
+.form-control:focus, .form-select:focus {
+    border-color: #165DFF;
+    box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+    outline: none;
+}
+
+/* 按钮样式优化 */
+.btn-primary {
+    background-color: #165DFF;
+    border-color: #165DFF;
+}
+.btn-primary:hover {
+    background-color: #0E4BD8;
+    border-color: #0E4BD8;
+}
+.btn-success {
+    background-color: #00B42A;
+    border-color: #00B42A;
+}
+.btn-success:hover {
+    background-color: #009A22;
+    border-color: #009A22;
+}
+
+/* JSON展示区域样式（咨询师页面用） */
+pre {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 15px;
+    overflow-x: auto;
+    font-size: 14px;
+    color: #333;
+}
+
+/* 导航菜单激活项样式 */
+.navbar-nav .nav-link.active {
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}

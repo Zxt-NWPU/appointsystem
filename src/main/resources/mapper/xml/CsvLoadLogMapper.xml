@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.appointsystem.mapper.CsvLoadLogMapper">
+
+    <!-- 插入加载日志 -->
+    <insert id="insert" parameterType="com.school.appointsystem.entity.CsvLoadLog">
+        INSERT INTO csv_load_log (file_name, load_time, load_count, status, error_msg)
+        VALUES (#{fileName}, #{loadTime}, #{loadCount}, #{status}, #{errorMsg})
+    </insert>
+
+</mapper>

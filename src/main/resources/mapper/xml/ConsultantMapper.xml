@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.school.appointsystem.mapper.ConsultantMapper">
+
+    <!-- 查询所有咨询师 -->
+    <select id="selectAll" resultType="com.school.appointsystem.entity.Consultant">
+        SELECT id, id_card AS idCard, name, phone, school, company, intro, type
+        FROM consultant
+    </select>
+
+    <!-- 根据身份证号查询 -->
+    <select id="selectByIdCard" parameterType="String" resultType="com.school.appointsystem.entity.Consultant">
+        SELECT id, id_card AS idCard, name, phone, school, company, intro, type
+        FROM consultant
+        WHERE id_card = #{idCard}
+    </select>
+
+    <!-- 插入咨询师 -->
+    <insert id="insert" parameterType="com.school.appointsystem.entity.Consultant">
+        INSERT INTO consultant (id_card, name, phone, school, company, intro, type)
+        VALUES (#{idCard}, #{name}, #{phone}, #{school}, #{company}, #{intro}, #{type})
+    </insert>
+
+</mapper>

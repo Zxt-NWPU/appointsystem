@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>就业咨询预约系统</title>
+    <!-- 引入本地CSS（css目录下的style.css） -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- 引入Bootstrap CSS（CDN+本地备份建议：可下载至css目录，此处用CDN简化） -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5" id="app">
+    <h1 class="text-center mb-5 text-primary">就业咨询预约系统</h1>
+    <!-- 导航菜单 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-5 rounded shadow">
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link active" href="/pages/consultant.html">咨询师信息</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/pages/student.html">添加学生信息</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/pages/reserve.html">咨询预约</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/pages/record.html">咨询记录管理</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- 首页欢迎信息 -->
+    <div class="card text-center shadow mb-5">
+        <div class="card-body">
+            <h5 class="card-title">欢迎使用系统</h5>
+            <p class="card-text">请通过上方导航菜单选择所需功能，完成咨询师查询、学生添加、预约及记录管理操作</p>
+        </div>
+    </div>
+
+    <!-- 功能模块卡片 -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-badge" viewBox="0 0 16 16">
+                            <path d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                            <path d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0h-7zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-.492C11.392 12.387 10.063 12 8 12s-3.392.387-4.224.803a4.2 4.2 0 0 0-.776.492V2.5z"/>
+                        </svg>
+                        咨询师信息
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">查看系统中的所有咨询师信息，包括大学咨询师和企业咨询师，支持按类型筛选和关键词搜索。</p>
+                    <ul class="list-unstyled">
+                        <li>✓ 查看咨询师详细信息</li>
+                        <li>✓ 按类型筛选（大学/企业）</li>
+                        <li>✓ 关键词搜索功能</li>
+                    </ul>
+                    <a href="/pages/consultant.html" class="btn btn-primary">进入管理</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-plus" viewBox="0 0 16 16">
+                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                            <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                        </svg>
+                        添加学生信息
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">录入新学生的基本信息，包括学号、姓名、性别、学院、联系方式等，为后续预约做准备。</p>
+                    <ul class="list-unstyled">
+                        <li>✓ 录入学生基本信息</li>
+                        <li>✓ 自动验证输入格式</li>
+                        <li>✓ 防止学号重复</li>
+                    </ul>
+                    <a href="/pages/student.html" class="btn btn-success">添加学生</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-calendar-check" viewBox="0 0 16 16">
+                            <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                        </svg>
+                        咨询预约
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">为学生预约咨询时间，选择咨询师、咨询室和时间段，系统自动生成预约ID。</p>
+                    <ul class="list-unstyled">
+                        <li>✓ 创建咨询预约</li>
+                        <li>✓ 选择咨询师和咨询室</li>
+                        <li>✓ 自动生成预约ID</li>
+                    </ul>
+                    <a href="/pages/reserve.html" class="btn btn-warning">立即预约</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-earmark-text" viewBox="0 0 16 16">
+                            <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                        </svg>
+                        咨询记录管理
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">完善咨询记录，填写咨询问题和结论，支持导出为JSON、XML、TXT等多种格式。</p>
+                    <ul class="list-unstyled">
+                        <li>✓ 完善咨询记录</li>
+                        <li>✓ 多格式导出（JSON/XML/TXT）</li>
+                        <li>✓ 查看记录统计</li>
+                    </ul>
+                    <a href="/pages/record.html" class="btn btn-info text-white">记录管理</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- 引入本地JS（js目录下的文件，顺序：第三方库→自定义工具） -->
+<script src="/js/vue.global.js"></script>
+<script src="/js/axios.min.js"></script>
+<script src="/js/tools.js"></script>
+<!-- 首页简单交互脚本 -->
+<script>
+    const { createApp } = Vue;
+    createApp({
+        mounted() {
+            console.log("系统首页加载完成");
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>

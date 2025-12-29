@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加学生信息</title>
+    <!-- 引入样式资源 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container mt-5" id="studentApp">
+    <h2 class="mb-4 text-primary">学生信息管理</h2>
+    
+    <!-- 学生信息表单 -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">添加学生信息</h5>
+        </div>
+        <div class="card-body">
+            <form @submit.prevent="submitStudentInfo" id="studentForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="studentId" class="form-label">学号 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="studentId" v-model="student.studentId" placeholder="如2024001">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">姓名 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" v-model="student.name" placeholder="请输入姓名">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="gender" class="form-label">性别 <span class="text-danger">*</span></label>
+                        <select class="form-select" id="gender" v-model="student.gender">
+                            <option value="">请选择性别</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="college" class="form-label">学院 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="college" v-model="student.college" placeholder="如计算机学院">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label">联系电话 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="phone" v-model="student.phone" placeholder="如13800138000">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="birthday" class="form-label">生日 <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="birthday" v-model="student.birthday">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="remark" class="form-label">备注（可选）</label>
+                    <textarea class="form-control" id="remark" v-model="student.remark" rows="2" placeholder="可输入额外信息"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">提交学生信息</button>
+                <button type="button" class="btn btn-outline-secondary ms-2" @click="resetForm">重置表单</button>
+                <a href="/index.html" class="btn btn-outline-primary ms-2">返回首页</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- 学生列表 -->
+    <div class="card">
+        <div class="card-header bg-light">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0">学生列表</h5>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control" 
+                               v-model="searchKeyword" 
+                               @input="filterStudents"
+                               placeholder="搜索学号、姓名或学院">
+                        <button class="btn btn-outline-secondary" @click="resetSearch">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- 学生统计 -->
+            <div class="mb-3">
+                <span class="text-muted">共 {{ filteredStudents.length }} 名学生</span>
+            </div>
+
+            <!-- 学生表格 -->
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 10%;">序号</th>
+                            <th style="width: 15%;">学号</th>
+                            <th style="width: 12%;">姓名</th>
+                            <th style="width: 8%;">性别</th>
+                            <th style="width: 18%;">学院</th>
+                            <th style="width: 15%;">联系电话</th>
+                            <th style="width: 12%;">生日</th>
+                            <th style="width: 10%;">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(student, index) in filteredStudents" :key="student.id">
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ student.studentId }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>
+                                <span :class="student.gender === '男' ? 'badge bg-primary' : 'badge bg-danger'">
+                                    {{ student.gender }}
+                                </span>
+                            </td>
+                            <td>{{ student.college }}</td>
+                            <td>{{ student.phone }}</td>
+                            <td>{{ student.birthday }}</td>
+                            <td>
+                                <small class="text-muted">{{ student.remark || '无' }}</small>
+                            </td>
+                        </tr>
+                        <tr v-if="filteredStudents.length === 0">
+                            <td colspan="8" class="text-center text-muted">
+                                <div class="py-4">
+                                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                    <p class="mt-2">暂无学生数据</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 引入JS资源 -->
+<script src="/js/vue.global.js"></script>
+<script src="/js/axios.min.js"></script>
+<script src="/js/tools.js"></script>
+<script>
+    const { createApp } = Vue;
+    createApp({
+        data() {
+            return {
+                // 学生信息对象（与后端实体类字段对应）
+                student: {
+                    studentId: "",
+                    name: "",
+                    gender: "",
+                    college: "",
+                    phone: "",
+                    birthday: "",
+                    remark: ""
+                },
+                // 学生列表数据
+                students: [],           // 所有学生
+                filteredStudents: [],   // 过滤后的学生
+                searchKeyword: ""       // 搜索关键词
+            };
+        },
+        mounted() {
+            // 页面加载时获取学生列表
+            this.loadStudents();
+        },
+        methods: {
+            /**
+             * 加载所有学生
+             */
+            async loadStudents() {
+                try {
+                    const response = await axios.get("/api/students");
+                    const data = response.data;
+                    this.students = Array.isArray(data) ? data : [];
+                    this.filteredStudents = this.students;
+                    console.log("加载学生数据成功，共", this.students.length, "条");
+                } catch (error) {
+                    console.error("加载学生数据失败:", error);
+                    this.handleError(error, "加载学生数据失败");
+                    this.students = [];
+                    this.filteredStudents = [];
+                }
+            },
+            /**
+             * 过滤学生（根据学号、姓名、学院）
+             */
+            filterStudents() {
+                const keyword = this.searchKeyword.toLowerCase().trim();
+                if (!keyword) {
+                    this.filteredStudents = this.students;
+                    return;
+                }
+                this.filteredStudents = this.students.filter(s => 
+                    s.studentId.toLowerCase().includes(keyword) ||
+                    s.name.toLowerCase().includes(keyword) ||
+                    (s.college && s.college.toLowerCase().includes(keyword))
+                );
+            },
+            /**
+             * 重置搜索
+             */
+            resetSearch() {
+                this.searchKeyword = "";
+                this.filteredStudents = this.students;
+            },
+            /**
+             * 提交学生信息（前端校验→后端请求）
+             */
+            async submitStudentInfo() {
+                if (!checkStudentInput(this.student)) {
+                    return;
+                }
+                try {
+                    await axios.post("/api/students", this.student);
+                    alert("学生信息添加成功！学号：" + this.student.studentId);
+                    this.resetForm();
+                    this.loadStudents();
+                } catch (error) {
+                    this.handleError(error, "添加学生信息失败");
+                }
+            },
+            /**
+             * 重置表单
+             */
+            resetForm() {
+                this.student = {
+                    studentId: "",
+                    name: "",
+                    gender: "",
+                    college: "",
+                    phone: "",
+                    birthday: "",
+                    remark: ""
+                };
+            }
+        }
+    }).mount('#studentApp');
+</script>
+</body>
+</html>

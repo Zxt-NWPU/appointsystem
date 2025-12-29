@@ -1,0 +1,25 @@
+spring:
+  # 数据库配置（修改为你的MySQL用户名和密码）
+  datasource:
+    url: jdbc:mysql://localhost:3306/employment_consult?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    username: root  # 你的MySQL用户名（默认root）
+    password: 123456  # 你的MySQL密码
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # CSV文件路径配置（resources目录下）
+  csv:
+    consultant-path: classpath:consultant.csv
+    room-path: classpath:room.csv
+
+# MyBatis配置（与包路径对应）
+mybatis:
+  mapper-locations: classpath:mapper/xml/*.xml  # XML文件存放路径
+  type-aliases-package: com.school.appointsystem.entity  # 实体类包路径
+  configuration:
+    map-underscore-to-camel-case: true  # 下划线转驼峰（数据库字段→实体类属性）
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 打印SQL日志（开发调试用）
+
+# 服务器配置（与前端约定端口8080）
+server:
+  port: 8080
+  servlet:
+    context-path: /

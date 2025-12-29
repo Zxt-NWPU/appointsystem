@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>咨询预约</title>
+    <!-- 引入样式资源 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container mt-5" id="reserveApp">
+    <h2 class="mb-4 text-primary">咨询预约管理</h2>
+    
+    <!-- 预约表单 -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">创建预约</h5>
+        </div>
+        <div class="card-body">
+            <form @submit.prevent="createReserve" id="reserveForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="studentName" class="form-label">学生姓名 <span class="text-danger">*</span></label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="studentName" 
+                               v-model="reserve.studentName" 
+                               list="studentList"
+                               @input="filterStudents"
+                               placeholder="输入学生姓名或学号搜索">
+                        <datalist id="studentList">
+                            <option v-for="student in filteredStudents" :key="student.id" :value="student.name">
+                                {{ student.studentId }} - {{ student.name }} - {{ student.college }}
+                            </option>
+                        </datalist>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="consultantName" class="form-label">咨询师姓名 <span class="text-danger">*</span></label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="consultantName" 
+                               v-model="reserve.consultantName" 
+                               list="consultantList"
+                               @input="filterConsultants"
+                               placeholder="输入咨询师姓名搜索">
+                        <datalist id="consultantList">
+                            <option v-for="consultant in filteredConsultants" :key="consultant.id" :value="consultant.name">
+                                {{ consultant.name }} - {{ consultant.type === 1 ? '大学咨询师' : '企业咨询师' }} - {{ consultant.school || consultant.company }}
+                            </option>
+                        </datalist>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="roomNo" class="form-label">咨询室编号 <span class="text-danger">*</span></label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="roomNo" 
+                               v-model="reserve.roomNo" 
+                               list="roomList"
+                               @input="filterRooms"
+                               placeholder="输入咨询室编号搜索">
+                        <datalist id="roomList">
+                            <option v-for="room in filteredRooms" :key="room.id" :value="room.roomNo">
+                                {{ room.roomNo }} - {{ room.campus }} - {{ room.building }}
+                            </option>
+                        </datalist>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="startTime" class="form-label">咨询起始时间 <span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="form-control" id="startTime" v-model="reserve.startTime">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">提交预约</button>
+                <a href="/index.html" class="btn btn-outline-primary ms-2">返回首页</a>
+            </form>
+            <!-- 预约成功提示 -->
+            <div class="alert alert-success mt-3" v-if="reserveSuccess">
+                <h5>预约成功！</h5>
+                <p>预约记录ID：<strong>{{ reserveId }}</strong></p>
+                <p>请保存ID，用于后续完善咨询记录</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 预约列表 -->
+    <div class="card">
+        <div class="card-header bg-light">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0">预约列表</h5>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control" 
+                               v-model="searchKeyword" 
+                               @input="filterReserves"
+                               placeholder="搜索学生、咨询师或咨询室">
+                        <button class="btn btn-outline-secondary" @click="resetSearch">重置</button>
+                        <button class="btn btn-primary" @click="loadReserves">
+                            <i class="bi bi-arrow-clockwise"></i> 刷新
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- 预约统计 -->
+            <div class="mb-3">
+                <span class="text-muted">共 {{ filteredReserves.length }} 条预约记录</span>
+            </div>
+
+            <!-- 预约表格 -->
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 8%;">序号</th>
+                            <th style="width: 15%;">预约ID</th>
+                            <th style="width: 12%;">学生姓名</th>
+                            <th style="width: 12%;">咨询师</th>
+                            <th style="width: 15%;">咨询室</th>
+                            <th style="width: 18%;">预约时间</th>
+                            <th style="width: 10%;">状态</th>
+                            <th style="width: 10%;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(reserve, index) in filteredReserves" :key="reserve.id">
+                            <td>{{ index + 1 }}</td>
+                            <td>
+                                <code class="text-primary">{{ reserve.id }}</code>
+                            </td>
+                            <td>{{ reserve.studentName }}</td>
+                            <td>{{ reserve.consultantName }}</td>
+                            <td>{{ reserve.roomNo }}</td>
+                            <td>{{ reserve.startTime }}</td>
+                            <td>
+                                <span v-if="reserve.endTime" class="badge bg-success">已完成</span>
+                                <span v-else class="badge bg-warning text-dark">待完善</span>
+                            </td>
+                            <td>
+                                <button v-if="!reserve.endTime" 
+                                        class="btn btn-sm btn-outline-primary"
+                                        @click="goToComplete(reserve.id)"
+                                        title="前往完善记录">
+                                    完善
+                                </button>
+                                <span v-else class="text-muted">—</span>
+                            </td>
+                        </tr>
+                        <tr v-if="filteredReserves.length === 0">
+                            <td colspan="8" class="text-center text-muted">
+                                <div class="py-4">
+                                    <i class="bi bi-calendar-x" style="font-size: 2rem;"></i>
+                                    <p class="mt-2">暂无预约记录</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 引入JS资源 -->
+<script src="/js/vue.global.js"></script>
+<script src="/js/axios.min.js"></script>
+<script src="/js/tools.js"></script>
+<script>
+    const { createApp } = Vue;
+    createApp({
+        data() {
+            return {
+                // 预约信息对象
+                reserve: {
+                    studentName: "",
+                    consultantName: "",
+                    roomNo: "",
+                    startTime: ""
+                },
+                reserveSuccess: false, // 预约成功标识
+                reserveId: "",          // 预约记录ID
+                // 基础数据
+                students: [],           // 所有学生
+                consultants: [],        // 所有咨询师
+                rooms: [],              // 所有咨询室
+                // 过滤后的数据
+                filteredStudents: [],
+                filteredConsultants: [],
+                filteredRooms: [],
+                // 预约列表数据
+                reserves: [],           // 所有预约记录
+                filteredReserves: [],   // 过滤后的预约记录
+                searchKeyword: ""       // 搜索关键词
+            };
+        },
+        mounted() {
+            // 页面加载时获取所有数据
+            this.loadStudents();
+            this.loadConsultants();
+            this.loadRooms();
+            this.loadReserves();
+        },
+        methods: {
+            /**
+             * 加载所有学生
+             */
+            async loadStudents() {
+                try {
+                    const response = await axios.get("/api/students");
+                    this.students = Array.isArray(response) ? response : [];
+                    this.filteredStudents = this.students;
+                } catch (error) {
+                    console.error("加载学生数据失败:", error);
+                }
+            },
+            /**
+             * 加载所有咨询师
+             */
+            async loadConsultants() {
+                try {
+                    const response = await axios.get("/api/consultants");
+                    this.consultants = Array.isArray(response) ? response : [];
+                    this.filteredConsultants = this.consultants;
+                } catch (error) {
+                    console.error("加载咨询师数据失败:", error);
+                }
+            },
+            /**
+             * 加载所有咨询室
+             */
+            async loadRooms() {
+                try {
+                    const response = await axios.get("/api/rooms");
+                    this.rooms = Array.isArray(response) ? response : [];
+                    this.filteredRooms = this.rooms;
+                } catch (error) {
+                    console.error("加载咨询室数据失败:", error);
+                }
+            },
+            /**
+             * 过滤学生（根据姓名或学号）
+             */
+            filterStudents() {
+                const keyword = this.reserve.studentName.toLowerCase();
+                if (!keyword) {
+                    this.filteredStudents = this.students;
+                    return;
+                }
+                this.filteredStudents = this.students.filter(s => 
+                    s.name.toLowerCase().includes(keyword) || 
+                    s.studentId.toLowerCase().includes(keyword) ||
+                    (s.college && s.college.toLowerCase().includes(keyword))
+                );
+            },
+            /**
+             * 过滤咨询师（根据姓名）
+             */
+            filterConsultants() {
+                const keyword = this.reserve.consultantName.toLowerCase();
+                if (!keyword) {
+                    this.filteredConsultants = this.consultants;
+                    return;
+                }
+                this.filteredConsultants = this.consultants.filter(c => 
+                    c.name.toLowerCase().includes(keyword) ||
+                    (c.school && c.school.toLowerCase().includes(keyword)) ||
+                    (c.company && c.company.toLowerCase().includes(keyword))
+                );
+            },
+            /**
+             * 过滤咨询室（根据编号或校区）
+             */
+            filterRooms() {
+                const keyword = this.reserve.roomNo.toLowerCase();
+                if (!keyword) {
+                    this.filteredRooms = this.rooms;
+                    return;
+                }
+                this.filteredRooms = this.rooms.filter(r => 
+                    r.roomNo.toLowerCase().includes(keyword) ||
+                    r.campus.toLowerCase().includes(keyword) ||
+                    r.building.toLowerCase().includes(keyword)
+                );
+            },
+            /**
+             * 加载所有预约记录
+             */
+            async loadReserves() {
+                try {
+                    const response = await axios.get("/api/records");
+                    this.reserves = Array.isArray(response) ? response : [];
+                    this.filteredReserves = this.reserves;
+                    console.log("✅ 加载预约记录成功，共", this.reserves.length, "条");
+                } catch (error) {
+                    console.error("❌ 加载预约记录失败:", error);
+                    this.reserves = [];
+                    this.filteredReserves = [];
+                }
+            },
+            /**
+             * 过滤预约记录（根据学生、咨询师、咨询室）
+             */
+            filterReserves() {
+                const keyword = this.searchKeyword.toLowerCase().trim();
+                if (!keyword) {
+                    this.filteredReserves = this.reserves;
+                    return;
+                }
+                this.filteredReserves = this.reserves.filter(r => 
+                    r.studentName.toLowerCase().includes(keyword) ||
+                    r.consultantName.toLowerCase().includes(keyword) ||
+                    r.roomNo.toLowerCase().includes(keyword) ||
+                    r.id.toLowerCase().includes(keyword)
+                );
+            },
+            /**
+             * 重置搜索
+             */
+            resetSearch() {
+                this.searchKeyword = "";
+                this.filteredReserves = this.reserves;
+            },
+            /**
+             * 前往完善记录页面
+             */
+            goToComplete(recordId) {
+                // 跳转到咨询记录管理页面，并带上ID参数
+                window.location.href = `/pages/record.html?id=${recordId}`;
+            },
+            /**
+             * 创建咨询预约
+             */
+            async createReserve() {
+                // 1. 校验输入
+                if (!this.reserve.studentName || !this.reserve.consultantName || !this.reserve.roomNo || !this.reserve.startTime) {
+                    alert("请填写完整的预约信息！");
+                    return;
+                }
+                // 2. 转换datetime-local格式为后端期望格式
+                const formattedTime = this.formatDateTime(this.reserve.startTime);
+                if (!checkTimeFormat(formattedTime)) {
+                    alert("起始时间格式错误！");
+                    return;
+                }
+                // 3. 生成唯一预约ID（前端暂生成，后端需确认唯一性）
+                this.reserveId = generateReserveId();
+                // 4. 调用后端接口提交预约
+                try {
+                    const reserveData = {
+                        id: this.reserveId,
+                        studentName: this.reserve.studentName,
+                        consultantName: this.reserve.consultantName,
+                        roomNo: this.reserve.roomNo,
+                        startTime: formattedTime
+                    };
+                    await axios.post("/api/reserves", reserveData);
+                    // 5. 显示成功提示
+                    this.reserveSuccess = true;
+                    // 6. 重置表单（保留成功提示）
+                    this.reserve = {
+                        studentName: "",
+                        consultantName: "",
+                        roomNo: "",
+                        startTime: ""
+                    };
+                    // 7. 重新加载预约列表
+                    this.loadReserves();
+                } catch (error) {
+                    this.reserveSuccess = false;
+                    alert("预约失败：" + (error.response?.data?.msg || "服务器异常，请稍后重试"));
+                    console.error("预约错误：", error);
+                }
+            },
+            /**
+             * 格式化datetime-local时间为后端期望格式
+             * @param {string} dateTimeStr - datetime-local格式（yyyy-MM-ddTHH:mm）
+             * @returns {string} 后端期望格式（yyyy-MM-dd HH:mm）
+             */
+            formatDateTime(dateTimeStr) {
+                if (!dateTimeStr) return "";
+                return dateTimeStr.replace("T", " ");
+            }
+        }
+    }).mount('#reserveApp');
+</script>
+</body>
+</html>
